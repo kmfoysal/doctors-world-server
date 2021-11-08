@@ -20,6 +20,18 @@ async function run (){
         await client.connect();
         const database = client.db('doctors_world');
         const appointmentsCollection = database.collection('appointments');
+
+        // Get API for Appointments Details
+        app.get('/appointmentsDetails', async(req, res)=>{
+          const email = req.query.email;
+          const date = new Date(req.query.date).toLocaleDateString();
+          console.log(email,date);
+          const query = {email:email, date:date};
+          const cursor = appointmentsCollection.find(query);
+          console.log(query);
+          const appointmentsDetails = await cursor.toArray();
+          res.json(appointmentsDetails);
+        })
         
         // Post API for Appointments 
         app.post('/appointments', async(req, res)=>{
