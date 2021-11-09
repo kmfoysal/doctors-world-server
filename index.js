@@ -20,6 +20,8 @@ async function run (){
         await client.connect();
         const database = client.db('doctors_world');
         const appointmentsCollection = database.collection('appointments');
+        const usersCollection = database.collection('users');
+
 
         // Get API for Appointments Details
         app.get('/appointmentsDetails', async(req, res)=>{
@@ -38,6 +40,23 @@ async function run (){
             const appointment = req.body;
             const result = await appointmentsCollection.insertOne(appointment);
             res.json(result)
+        })
+
+        // Post api for create user
+        app.post('/users', async(req, res)=>{
+          const user = req.body;
+          const result = await usersCollection.insertOne(user);
+            res.json(result)
+        })
+
+        // Put api for upsart 
+        app.put('/users', async(req, res)=>{
+          const user = req.body;
+          const filter = {email: user.email};
+          const options = {upsert:true};
+          const updateUser = {$set: user};
+          const result = await usersCollection.updateOne(filter, updateUser, options)
+          res.json(result);
         })
     }
     finally{
